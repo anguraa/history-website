@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ისტორიული ბრძოლები წლების მიხედვით</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- CSS ნაწილი --- */
+        :root {
+            --primary-text: #f0f0f0; /* ღია ტექსტი მუქ ფონზე */
+            --secondary-text: #cccccc; /* ოდნავ მუქი ღია ტექსტი */
+            --container-bg: rgba(255, 255, 255, 0.15); /* გამჭვირვალე თეთრი ფონი კონტეინერებისთვის */
+            --modal-bg: rgba(255, 255, 255, 0.1); /* მოდალებისთვის უფრო გამჭვირვალე */
+            --border-light: rgba(255, 255, 255, 0.3); /* ღია საზღვარი */
+            --accent-blue: #70a1ff; /* ღია ლურჯი აქცენტი */
+            --accent-green: #48dbfb; /* ცისფერი აქცენტი */
+            --shadow-subtle: 0 4px 15px rgba(0, 0, 0, 0.3); /* რბილი ჩრდილი მუქ ფონზე */
+            --shadow-strong: 0 8px 25px rgba(0, 0, 0, 0.5); /* ძლიერი ჩრდილი */
+            --overlay-color: rgba(0, 0, 0, 0.6); /* მუქი გამჭვირვალე ფენა ფოტოზე */
+
+            /* მოდალის შიდა კონტენტის ფონი (უფრო გამჭვირვალე) */
+            --inner-modal-content-bg: rgba(255, 255, 255, 0.08); 
+            --inner-modal-text: #f0f0f0; /* ღია ტექსტი მოდალის შიგნით */
+            --inner-modal-border: rgba(255, 255, 255, 0.2); /* მოდალის შიდა საზღვრები */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* ცენტრში გასწორება ვერტიკალურად */
+            min-height: 100vh;
+            box-sizing: border-box;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+
+            /* ფონის ფოტო */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Henri_IV_%C3%A0_la_bataille_d%27Ivry.jpg/960px-Henri_IV_%C3%A0_la_bataille_d%27Ivry.jpg');
+            background-size: cover; /* მთელ ეკრანზე გაშლა */
+            background-position: center; /* ცენტრში გასწორება */
+            background-attachment: fixed; /* არ დაიხვევა სქროლისას */
+            position: relative; /* overlay-სთვის */
+            overflow-y: auto; /* საჭიროების შემთხვევაში სქროლი */
+        }
+
+        /* ფონის მუქი overlay */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay-color);
+            z-index: -1; /* ფონის უკან */
+        }
+
+        .container {
+            background-color: var(--container-bg); /* გამჭვირვალე ფონი */
+            backdrop-filter: blur(5px); /* ფონის დაბუნდოვნება უკან */
+            padding: 35px 45px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-strong); /* უფრო გამოკვეთილი ჩრდილი */
+            text-align: center;
+            max-width: 850px;
+            width: 95%;
+            border: 1px solid var(--border-light); /* ღია საზღვარი */
+            position: relative;
+            animation: slideInUp 0.8s ease-out; /* ოდნავ ნელი ანიმაცია */
+            color: var(--primary-text); /* ტექსტის ფერი */
+            margin: auto; /* ცენტრში გასწორება ავტომატურად */
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary-text); /* სათაურის ფერი */
+            margin-bottom: 30px;
+            font-size: 2.5em; /* ოდნავ პატარა სათაური */
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* მცირე ჩრდილი სათაურზე */
+        }
+
+        .input-section {
+            margin-bottom: 35px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .input-group {
+            flex: 1 1 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        label {
+            font-size: 0.95em;
+            color: var(--secondary-text); /* ლეიბლის ფერი */
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1.1em;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.2); /* გამჭვირვალე ინფუთი */
+            color: var(--primary-text); /* ინფუთის ტექსტის ფერი */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3); /* შიდა ჩრდილი */
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--secondary-text); /* Placeholder-ის ფერი */
+            opacity: 0.8;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(112, 161, 255, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.3);
+            background-color: rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        button {
+            padding: 14px 30px;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-subtle);
+            flex-shrink: 0;
+            min-width: 120px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        button:hover {
+            background-color: #558ee8; /* ოდნავ მუქი ლურჯი */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        #battleInfo {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: var(--container-bg); /* იგივე გამჭვირვალე ფონი */
+            backdrop-filter: blur(3px); /* ოდნავ ნაკლები დაბუნდოვნება */
+            border-left: 6px solid var(--accent-blue);
+            border-radius: 8px;
+            font-size: 1.05em;
+            text-align: left;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+            box-shadow: var(--shadow-subtle);
+            color: var(--primary-text);
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        #battleInfo.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Tabs: History and Feedback (Icons) --- */
+        .tab-bar {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .tab-toggle-button {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            border: 1px solid var(--border-light);
+            border-radius: 50%; /* მრგვალი ღილაკები */
+            width: 40px; /* შემცირებული სიგანე */
+            height: 40px; /* შემცირებული სიმაღლე */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1em; /* ხატულის ზომა */
+            color: var(--secondary-text);
+            transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+            box-shadow: var(--shadow-subtle);
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-toggle-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--primary-text);
+        }
+
+        .tab-toggle-button.active {
+            background-color: var(--accent-blue);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-blue);
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg); /* გამჭვირვალე მოდალის ფონი */
+            backdrop-filter: blur(8px); /* მოდალის დაბუნდოვნება */
+            padding: 30px;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            width: 85%;
+            max-width: 600px;
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            transform: translateY(20px);
+            animation: slideInModal 0.4s ease-out forwards;
+            color: var(--primary-text); /* მოდალის ტექსტი */
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes slideInModal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-button {
+            color: var(--secondary-text);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s ease;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--primary-text);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h2 {
+            color: var(--primary-text);
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 2em;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light); /* ღია საზღვარი მოდალის სათაურში */
+            padding-bottom: 15px;
+        }
+
+        /* მოდალის შიდა კონტენტი (ისტორია და ფორმა) */
+        .inner-modal-box {
+            background-color: var(--inner-modal-content-bg); /* უფრო გამჭვირვალე */
+            backdrop-filter: blur(5px); /* ახალი დაბუნდოვნება */
+            border: 1px solid var(--inner-modal-border); /* ახალი საზღვარი */
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--inner-modal-text); /* ღია ტექსტი */
+        }
+
+        #historyList {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 250px;
+            overflow-y: auto;
+            /* გამოსაწევი ხაზის გაუქმება */
+            resize: none; 
+        }
+
+        #historyList li {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--inner-modal-border); /* ახალი საზღვარი */
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95em;
+        }
+
+        #historyList li:last-child {
+            border-bottom: none;
+        }
+
+        #historyList li:hover {
+            background-color: rgba(255, 255, 255, 0.15); /* ოდნავ გამჭვირვალე ღია ფონი ჰოვერზე */
+            transform: translateX(3px);
+        }
+
+        #historyList li span:first-child {
+            font-weight: 600;
+            color: var(--accent-blue);
+            font-size: 1.05em;
+        }
+
+        #historyList li .clear-history-item {
+            color: var(--secondary-text); /* შესაბამისი ფერი */
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-left: 10px;
+            opacity: 0.7;
+        }
+        #historyList li .clear-history-item:hover {
+            color: #e74c3c;
+            opacity: 1;
+        }
+
+        /* --- Feedback Form Styles --- */
+        #feedbackForm {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            /* გამოსაწევი ხაზის გაუქმება */
+            resize: none;
+        }
+
+        #feedbackForm label {
+            font-weight: 500;
+            color: var(--inner-modal-text); /* ტექსტის ფერი */
+        }
+
+        #feedbackForm input[type="email"],
+        #feedbackForm textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--inner-modal-border); /* ახალი საზღვარი */
+            border-radius: 8px;
+            font-size: 1em;
+            box-sizing: border-box;
+            background-color: rgba(255, 255, 255, 0.1); /* გამჭვირვალე ინფუთი */
+            color: var(--inner-modal-text); /* ინფუთის ტექსტი */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            /* გამოსაწევი ხაზის გაუქმება */
+            resize: none;
+        }
+
+        #feedbackForm input[type="email"]::placeholder,
+        #feedbackForm textarea::placeholder {
+            color: var(--secondary-text);
+            opacity: 0.7;
+        }
+
+        #feedbackForm input[type="email"]:focus,
+        #feedbackForm textarea:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(112, 161, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.2);
+            outline: none;
+        }
+
+        #feedbackForm textarea {
+            min-height: 120px;
+        }
+
+        #feedbackForm button[type="submit"] {
+            background-color: var(--accent-green);
+            align-self: flex-end;
+            margin-top: 10px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        #feedbackForm button[type="submit"]:hover {
+            background-color: #38c8ff;
+        }
+
+        /* --- Footer Styles --- */
+        .footer-info {
+            color: var(--secondary-text);
+            font-size: 0.85em;
+            margin-top: 50px; /* დაშორება მთავარი კონტეინერიდან */
+            text-align: center;
+            max-width: 700px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.4); /* მუქი გამჭვირვალე ფონი */
+            backdrop-filter: blur(3px);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-subtle);
+            line-height: 1.5;
+            text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.7);
+        }
+
+
+        /* მედია ქუერი მობილურებისთვის */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .input-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .input-group {
+                width: 100%;
+            }
+
+            input[type="text"],
+            button {
+                width: 100%;
+                max-width: none;
+            }
+
+            .tab-bar {
+                top: 15px;
+                left: 15px;
+                gap: 8px;
+            }
+
+            .tab-toggle-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1em;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5em;
+            }
+
+            .footer-info {
+                margin-top: 30px;
+                padding: 15px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tab-bar">
+            <button class="tab-toggle-button active" id="historyTabButton" onclick="openModal('historyModal')">
+                <i class="fas fa-book"></i> </button>
+            <button class="tab-toggle-button" id="feedbackTabButton" onclick="openModal('feedbackModal')">
+                <i class="fas fa-envelope"></i> </button>
+        </div>
+
+        <h1>ისტორიული ბრძოლები წლების მიხედვით</h1>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="yearInput">შეიყვანეთ წელი:</label>
+                <input type="text" id="yearInput" placeholder="(მაგ: 1121)" onkeydown="if(event.keyCode === 13) getBattleInfo()">
+            </div>
+            <button onclick="getBattleInfo()">ძებნა</button>
+        </div>
+
+        <div id="battleInfo">
+            შეიყვანეთ წელი და გაიგეთ მეტი ისტორიული ბრძოლების შესახებ!
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('historyModal')">&times;</span>
+            <h2>მოძიებული წლების ისტორია</h2>
+            <div class="inner-modal-box">
+                <ul id="historyList">
+                    </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('feedbackModal')">&times;</span>
+            <h2>გამოგვიგზავნეთ უკუკავშირი</h2>
+            <div class="inner-modal-box">
+                <form id="feedbackForm" action="https://formspree.io/f/xldnaaqp" method="POST">
+                    <label for="email">თქვენი ელ.ფოსტა (არასავალდებულო):</label>
+                    <input type="email" id="email" name="email" placeholder="ელ.ფოსტა (მაგ. user@example.com)">
+                    
+                    <label for="message">თქვენი შეტყობინება:</label>
+                    <textarea id="message" name="message" rows="6" placeholder="აღწერეთ თქვენი შეკითხვა, შენიშვნა ან შეცდომა..." required></textarea>
+                    
+                    <button type="submit">გაგზავნა</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        დიდი მადლობა, რომ ეწვიეთ ჩვენს საიტს. აქ თქვენ ნახავთ ინფორმაციას ისტორიულ ომებს ახ. წ. 1 წლიდან დღემდე.
+გთხოვთ გაითვალისწინოთ, რომ საიტი ამჟამად დახვეწის პროცესშია.
+    </div>
+
+    <script>
+        // --- JavaScript ნაწილი ---
+        // მონაცემთა ბაზა (წელი: აღწერა) - გაფართოებული
+        const battlesData = {
+            '1': 'პირველი საუკუნის დასაწყისი: მიუხედავად იმისა, რომ პირველი წელი არ გამოირჩევა კონკრეტული "ბრძოლით", იგი რომაული მშვიდობის (Pax Romana) და იმპერიის გაძლიერების ხანაა. ამ პერიოდში რომი აგრძელებს გაფართოებას და გავლენას მსოფლიოზე.',
+            '9': 'ტევტობურგის ტყის ბრძოლა: 9 წელს გერმანულმა ტომებმა ჰერმანის მეთაურობით გამანადგურებელი მარცხი მიაყენეს რომაულ ლეგიონებს, რითაც შეაჩერეს რომის იმპერიის ექსპანსია გერმანიაში.',
+            '60': 'ბოუდიკას აჯანყება: 60 ან 61 წელს ბრიტანელმა დედოფალმა ბოუდიკამ რომაელთა წინააღმდეგ მასშტაბური აჯანყება მოაწყო, თუმცა საბოლოოდ დამარცხდა.',
+            '70': 'იერუსალიმის ალყა: 70 წელს რომის იმპერიამ ტიტუსის მეთაურობით აიღო და გაანადგურა იერუსალიმი, რაც ებრაული ომების კულმინაცია იყო.',
+            '313': 'მილანის ედიქტი (ბრძოლის შედეგი): 313 წელს იმპერატორ კონსტანტინეს გამარჯვებამ (მაგ. მილვიუსის ხიდთან 312 წელს) გზა გაუხსნა ქრისტიანობის აღიარებას რომის იმპერიაში.',
+            '410': 'რომის გაძარცვა: 410 წელს ვესტგოთებმა ალარიხის მეთაურობით გაძარცვეს რომი, რაც დასავლეთ რომის იმპერიის დასუსტების სიმბოლო გახდა.',
+            '451': 'კატალონის ველების ბრძოლა: 451 წელს რომაელებმა და ვესტგოთებმა ატილას ჰუნების არმია შეაჩერეს, რითაც ევროპა ჰუნების სრული დაპყრობისგან იხსნეს.',
+            '476': 'დასავლეთ რომის იმპერიის დაცემა: 476 წელს რომულუს ავგუსტუსის ტახტიდან ჩამოგდებამ დასავლეთ რომის იმპერიის დასასრული აღნიშნა.',
+            '480 BC': 'თერმოპილეს ბრძოლა: ძვ.წ. 480 წელს სპარსეთის უზარმაზარ არმიასა და ბერძნულ გაერთიანებულ ძალებს შორის გამართული ბრძოლა, სადაც 300 სპარტელი გმირულად დაეცა.',
+            '333 BC': 'ისოსის ბრძოლა: ძვ.წ. 333 წელს ალექსანდრე დიდმა გადამწყვეტი გამარჯვება მოიპოვა სპარსეთის მეფე დარიუს III-ზე, რამაც მაკედონიის გავლენა გააფართოვა.',
+            '216 BC': 'კანეს ბრძოლა: ძვ.წ. 216 წელს ჰანიბალმა, კართაგენელმა გენერალმა, გამანადგურებელი მარცხი მიაყენა რომის რესპუბლიკის არმიას, რაც სამხედრო ისტორიის ერთ-ერთი უდიდესი ტაქტიკური შედევრია.',
+            '44 BC': 'იულიუს კეისრის მკვლელობა: მიუხედავად იმისა, რომ ბრძოლა არ იყო, ძვ.წ. 44 წელს იულიუს კეისრის მკვლელობამ რომის რესპუბლიკის დასასრული და იმპერიის დასაწყისი განაპირობა.',
+            '31 BC': 'აქციუმის ბრძოლა: ძვ.წ. 31 წელს ოქტავიანემ (შემდგომში იმპერატორი ავგუსტუსი) დაამარცხა მარკუს ანტონიუსი და კლეოპატრა, რამაც რომის რესპუბლიკის სამოქალაქო ომებს ბოლო მოუღო.',
+            '732': 'ტურნერის ბრძოლა: 732 წელს ფრანკებმა კარლ მარტელის მეთაურობით დაამარცხეს არაბები, რითაც შეაჩერეს ისლამის ექსპანსია დასავლეთ ევროპაში.',
+            '800': 'კარლოს დიდის გამეფება: 800 წელს კარლოს დიდი საღვთო რომის იმპერატორად ეკურთხა, რაც მნიშვნელოვანი ეტაპი იყო ევროპის ისტორიაში.',
+            '910': 'ლეხფელდის ბრძოლა (პირველი): 910 წელს უნგრელებმა გაანადგურეს ბავარიის არმია, რამაც აღმოსავლეთ ევროპაში მათი გავლენა გაზარდა.',
+            '1066': 'ჰასტინგსის ბრძოლა: 1066 წლის 14 ოქტომბერს, ჰასტინგსის ბრძოლა ინგლისის ისტორიაში გარდამტეხი მოვლენა იყო, რომელმაც უილიამ დამპყრობელს ინგლისის ტახტი მოუტანა და ქვეყნის განვითარების ვექტორი შეცვალა.',
+            '1096': 'პირველი ჯვაროსნული ლაშქრობის დასაწყისი: 1096 წელს დაიწყო პირველი ჯვაროსნული ლაშქრობა წმინდა მიწის გასათავისუფლებლად.',
+            '1121': 'დიდგორის ბრძოლა: 1121 წლის 12 აგვისტოს საქართველოს სამეფოსა და თურქ-სელჩუკთა კოალიციურ ლაშქარს შორის გამართული გადამწყვეტი ბრძოლა, რომელიც ქართველების გამარჯვებით დასრულდა და საქართველოს "ოქროს ხანის" დასაწყისად იქცა.',
+            '1204': 'კონსტანტინოპოლის აღება (მეოთხე ჯვაროსნული ლაშქრობა): 1204 წელს ჯვაროსნებმა აიღეს და გაძარცვეს კონსტანტინოპოლი, რაც ბიზანტიის იმპერიის დასუსტების კრიტიკული მომენტი იყო.',
+            '1212': 'ლას ნავას დე ტოლოსას ბრძოლა: 1212 წელს ქრისტიანულმა ესპანურმა სამეფოებმა დაამარცხეს ალმოჰადები, რამაც რეკონკისტის მიმდინარეობაზე დიდი გავლენა მოახდინა.',
+            '1241': 'მოჰის ბრძოლა: 1241 წელს მონღოლებმა დაამარცხეს უნგრული არმია, რამაც აღმოსავლეთ ევროპაში მონღოლთა შემოჭრა დაადასტურა.',
+            '1282': 'სიცილიური ვესპერი: 1282 წელს სიცილიაზე ფრანგების წინააღმდეგ აჯანყებამ, რომელიც ბრძოლის მსგავსი იყო, გამოიწვია საფრანგეთის გავლენის შემცირება სიცილიაში.',
+            '1346': 'კრესის ბრძოლა: 1346 წელს ასწლიანი ომის დროს ინგლისელებმა გაანადგურეს ფრანგული არმია, რაც ინგლისური მშვილდოსნების ეფექტურობის დემონსტრირება იყო.',
+            '1380': 'კულიკოვოს ბრძოლა: 1380 წელს რუსულმა ძალებმა დიმიტრი დონსკოის მეთაურობით დაამარცხეს ოქროს ურდო, რაც რუსეთის გათავისუფლებისკენ გადადგმული ნაბიჯი იყო.',
+            '1410': 'გრუნვალდის ბრძოლა: 1410 წელს პოლონეთისა და ლიტვის გაერთიანებულმა ძალებმა დაამარცხეს ტევტონთა ორდენი, რაც შუა საუკუნეების ევროპის ერთ-ერთი უდიდესი ბრძოლა იყო.',
+            '1415': 'აჟენკურის ბრძოლა: 1415 წელს ინგლისის მეფე ჰენრი V-მ მოულოდნელი გამარჯვება მოიპოვა საფრანგეთის უზარმაზარ არმიაზე ასწლიანი ომის დროს.',
+            '1453': 'კონსტანტინოპოლის დაცემა: 1453 წლის 29 მაისს ოსმალეთის იმპერიამ დაიპყრო კონსტანტინოპოლი, ბიზანტიის იმპერიის დედაქალაქი, რამაც ბოლო მოუღო ათასწლოვან იმპერიას და დიდი გავლენა იქონია მსოფლიო ისტორიაზე.',
+            '1469': 'ფერერას ბრძოლა (ივრის ბრძოლა): ივრის ბრძოლა, რომელიც ჰენრი IV-ის გამარჯვებით დასრულდა, 1590 წელს მოხდა. 1469 წელი აღინიშნება ისტორიული მოვლენებით, მათ შორის არაგონის მეფე ფერდინანდ II-ისა და კასტილიის დედოფალ იზაბელა I-ის ქორწინებით, რაც ესპანეთის გაერთიანების დასაწყისი იყო.',
+            '1492': 'გრანადის დაცემა: 1492 წელს ქრისტიანულმა ძალებმა აიღეს გრანადა, რამაც დაასრულა რეკონკისტა ესპანეთში. ამ წელს ასევე აღინიშნა ქრისტეფორე კოლუმბის პირველი მოგზაურობა ამერიკაში.',
+            '1526': 'მოჰაჩის ბრძოლა: 1526 წელს ოსმალეთის იმპერიამ დაამარცხა უნგრეთის სამეფო, რამაც უნგრეთის დაყოფა და ოსმალეთის ექსპანსია გამოიწვია ცენტრალურ ევროპაში.',
+            '1571': 'ლეპანტოს ბრძოლა: 1571 წელს წმინდა ლიგის ფლოტმა დაამარცხა ოსმალეთის ფლოტი, რამაც შეაჩერა ოსმალეთის საზღვაო ექსპანსია ხმელთაშუა ზღვაში.',
+            '1588': 'ესპანური არმადის დამარცხება: 1588 წელს ინგლისურმა ფლოტმა დაამარცხა ესპანური არმადა, რითაც ინგლისი საზღვაო ძალად იქცა და ესპანეთის ჰეგემონია შესუსტდა.',
+            '1590': 'ივრის ბრძოლა: 1590 წელს საფრანგეთის მეფე ანრი IV-მ გადამწყვეტი გამარჯვება მოიპოვა კათოლიკური ლიგის ძალებზე, რაც საფრანგეთის რელიგიური ომების მნიშვნელოვანი ეტაპი იყო.',
+            '1648': 'ვესტფალიის ზავი: 1648 წელს დასრულდა ოცდაათწლიანი ომი, რითაც შეიქმნა თანამედროვე ეროვნული სახელმწიფოების სისტემის საფუძველი ევროპაში.',
+            '1659': 'ბახტრიონის ბრძოლა: 1659 წელს კახეთის აჯანყებულმა გლეხობამ და თავადებმა ბახტრიონის ციხესთან დაამარცხეს ყიზილბაშები, რითაც აღიკვეთა კახეთის გამუსლიმანების მცდელობა.',
+            '1683': 'ვენის ალყა: 1683 წელს ქრისტიანულმა მოკავშირეებმა ვენასთან დაამარცხეს ოსმალეთის არმია, რამაც ოსმალეთის ექსპანსია ევროპაში საბოლოოდ შეაჩერა.',
+            '1704': 'ბლენჰაიმის ბრძოლა: 1704 წელს ევროპის მოკავშირეებმა დაამარცხეს ფრანგულ-ბავარიული არმია, რაც ესპანური მემკვიდრეობის ომის მნიშვნელოვანი მომენტი იყო.',
+            '1775': 'ლექსინგტონისა და კონკორდის ბრძოლები: 1775 წელს დაიწყო ამერიკის რევოლუციური ომი ბრიტანელებსა და ამერიკელ კოლონისტებს შორის პირველი შეტაკებებით.',
+            '1777': 'სარატოგას ბრძოლა: 1777 წელს ამერიკის რევოლუციური ომის დროს ამერიკულმა ძალებმა დაამარცხეს ბრიტანელები, რამაც საფრანგეთი დაარწმუნა ამერიკელების მხარდაჭერაში.',
+            '1789': 'ბასტილიის აღება: 1789 წლის 14 ივლისს პარიზელებმა აიღეს ბასტილიის ციხე, რითაც საფრანგეთის რევოლუცია დაიწყო.',
+            '1795': 'კრწანისის ბრძოლა: 1795 წლის 8-11 სექტემბერს თბილისთან გამართული ბრძოლა ქართლ-კახეთის სამეფოსა და ირანის შაჰ აღა-მაჰმად-ხანის არმიას შორის. მიუხედავად გმირული წინააღმდეგობისა, ქართული ჯარი დამარცხდა და თბილისი აიღეს.',
+            '1805': 'ტრაფალგარის ბრძოლა: 1805 წელს ბრიტანულმა ფლოტმა ნელსონის მეთაურობით გადამწყვეტი გამარჯვება მოიპოვა საფრანგეთ-ესპანეთის გაერთიანებულ ფლოტზე, რითაც უზრუნველყო ბრიტანეთის საზღვაო უპირატესობა.',
+            '1812': 'ბოროდინოს ბრძოლა: 1812 წელს ნაპოლეონის საფრანგეთის არმიასა და რუსეთის იმპერიის არმიას შორის გამართული ერთ-ერთი უსისხლიანესი ბრძოლა, რამაც ნაპოლეონს მოსკოვისკენ გზა გაუხსნა.',
+            '1815': 'ვატერლოოს ბრძოლა: 1815 წლის 18 ივნისს გამართული ბრძოლა, რომელშიც ნაპოლეონ ბონაპარტე დამარცხდა მოკავშირეთა ძალებთან, რითაც დასრულდა ნაპოლეონის ომების ერა.',
+            '1861': 'ფორტ სამტერის ბრძოლა: 1861 წელს დაიწყო ამერიკის სამოქალაქო ომი ფორტ სამტერზე თავდასხმით.',
+            '1863': 'გეტისბერგის ბრძოლა: 1863 წელს ამერიკის სამოქალაქო ომის დროს გამართული ყველაზე მასშტაბური ბრძოლა, რომელიც კავშირის გამარჯვებით დასრულდა და ომის მიმდინარეობა შეცვალა.',
+            '1870': 'სედანის ბრძოლა: 1870 წელს ფრანკო-პრუსიის ომის დროს პრუსიამ დაამარცხა საფრანგეთი, რამაც გამოიწვია მეორე საფრანგეთის იმპერიის დაცემა და გერმანიის გაერთიანება.',
+            '1914': 'მარნის ბრძოლა (პირველი): 1914 წელს პირველი მსოფლიო ომის დასაწყისში ფრანგულმა და ბრიტანულმა ძალებმა შეაჩერეს გერმანიის წინსვლა პარიზისკენ, რითაც სანგრების ომი დაიწყო.',
+            '1916': 'ვერდენის ბრძოლა: 1916 წელს დასავლეთის ფრონტზე გამართული ერთ-ერთი ყველაზე ხანგრძლივი და სისხლიანი ბრძოლა პირველ მსოფლიო ომში.',
+            '1918': 'მეორე მარნის ბრძოლა: 1918 წელს პირველი მსოფლიო ომის დასკვნით ეტაპზე მოკავშირეებმა გადამწყვეტი გამარჯვება მოიპოვეს გერმანიაზე, რამაც გერმანიის დამარცხება დააჩქარა.',
+            '1921': 'კოჯორ-ტაბახმელას ბრძოლა: 1921 წლის თებერვალში საქართველოს არმიამ დიდი წინააღმდეგობა გაუწია რუსეთის წითელ არმიას კოჯორსა და ტაბახმელასთან, მაგრამ საბოლოოდ საქართველო ოკუპირებულ იქნა.',
+            '1939': 'პოლონეთში შეჭრა (მეორე მსოფლიო ომის დასაწყისი): 1939 წლის 1 სექტემბერს გერმანიის პოლონეთში შეჭრით დაიწყო მეორე მსოფლიო ომი.',
+            '1940': 'დიდი ბრიტანეთის ბრძოლა: 1940 წელს გერმანიის საჰაერო ძალების თავდასხმა ბრიტანეთზე. ბრიტანეთის გამარჯვებამ ხელი შეუშალა გერმანიის ბრიტანეთში შეჭრას.',
+            '1941': 'პერლ ჰარბორის შეტევა: 1941 წლის 7 დეკემბერს იაპონიის თავდასხმამ პერლ ჰარბორზე აშშ ჩააბა მეორე მსოფლიო ომში.',
+            '1942': 'სტალინგრადის ბრძოლა: 1942 წლის აგვისტოდან 1943 წლის თებერვლამდე მიმდინარეობდა სტალინგრადის ბრძოლა, ერთ-ერთი ყველაზე სისხლიანი ბრძოლა ისტორიაში, რომელმაც მეორე მსოფლიო ომის აღმოსავლეთის ფრონტზე გარდამტეხი მომენტი შექმნა.',
+            '1943': 'კურსკის ბრძოლა: 1943 წელს აღმოსავლეთის ფრონტზე გამართული მსოფლიო ისტორიაში უდიდესი სატანკო ბრძოლა, რომელიც საბჭოთა კავშირის გამარჯვებით დასრულდა.',
+            '1944': 'ნორმანდიის დესანტი (D-Day): 1944 წლის 6 ივნისს მოკავშირეებმა ნორმანდიაში გადმოსხდნენ, რითაც დასავლეთის ფრონტი გაიხსნა მეორე მსოფლიო ომში.',
+            '1945': 'ბერლინის ბრძოლა: 1945 წლის აპრილ-მაისში წითელმა არმიამ აიღო ბერლინი, რითაც დასრულდა ომი ევროპაში მეორე მსოფლიო ომის ფარგლებში.',
+            '1950': 'კორეის ომის დასაწყისი: 1950 წელს ჩრდილოეთ კორეის სამხრეთ კორეაში შეჭრით დაიწყო კორეის ომი.',
+            '1954': 'დიენ ბიენ ფუს ბრძოლა: 1954 წელს ვიეტნამის ძალებმა დაამარცხეს ფრანგები, რამაც დაასრულა საფრანგეთის კოლონიური მმართველობა ინდოჩინეთში.',
+            '1962': 'კარიბის კრიზისი: მიუხედავად იმისა, რომ პირდაპირი ბრძოლა არ მომხდარა, 1962 წელს აშშ-სა და საბჭოთა კავშირს შორის ბირთვულმა დაპირისპირებამ მსოფლიო ომის ზღვარზე მიიყვანა.',
+            '1968': 'ტეტის შეტევა: 1968 წელს ვიეტნამის ომის დროს ვიეტკონგისა და ჩრდილოეთ ვიეტნამის არმიის ფართომასშტაბიანმა შეტევამ, მიუხედავად სამხედრო დამარცხებისა, შეცვალა ამერიკული საზოგადოების დამოკიდებულება ომის მიმართ.',
+            '1989': 'ბერლინის კედლის დაცემა: 1989 წელს ბერლინის კედლის დაცემამ ცივი ომის დასასრული და გერმანიის გაერთიანება მოასწავა.',
+            '1991': 'უდაბნოს ქარიშხალი: 1991 წელს აშშ-ის მეთაურობით კოალიციურმა ძალებმა გაათავისუფლეს ქუვეითი ერაყის ოკუპაციისგან, რითაც სპარსეთის ყურის ომი დასრულდა.',
+            '2001': '11 სექტემბრის ტერაქტები: 2001 წლის 11 სექტემბერს აშშ-ზე განხორციელდა ტერორისტული თავდასხმები, რამაც გამოიწვია "ტერორიზმთან ომის" დაწყება.',
+            '2003': 'ერაყის ომის დასაწყისი: 2003 წელს აშშ-ის მეთაურობით კოალიციური ძალები ერაყში შეიჭრნენ, რითაც ერაყის ომი დაიწყო.',
+            '2008': 'რუსეთ-საქართველოს ომი: 2008 წლის აგვისტოში რუსეთსა და საქართველოს შორის შეიარაღებული კონფლიქტი, რის შედეგადაც რუსეთმა საქართველოს ტერიტორიების ოკუპაცია მოახდინა.',
+            '2014': 'ყირიმის ანექსია და დონბასის ომი: 2014 წელს რუსეთმა მოახდინა ყირიმის ანექსია და დაიწყო კონფლიქტი აღმოსავლეთ უკრაინაში.',
+            '2022': 'უკრაინაში სრულმასშტაბიანი შეჭრა: 2022 წლის 24 თებერვალს რუსეთის სრულმასშტაბიანი შეჭრა უკრაინაში, რამაც ევროპაში ფართომასშტაბიანი ომი გამოიწვია.',
+            '2024': 'მიმდინარე მოვლენები: 2024 წელს მსოფლიოში გრძელდება გეოპოლიტიკური დაძაბულობა და ლოკალური კონფლიქტები, მათ შორის უკრაინაში მიმდინარე ომი. ასევე, აღინიშნება მნიშვნელოვანი მოვლენები ხელოვნური ინტელექტის განვითარებასა და კლიმატის ცვლილებებთან ბრძოლაში.',
+            '2025': 'პროგნოზი: 2025 წელი მოსალოდნელია იყოს მნიშვნელოვანი წელი ტექნოლოგიური პროგრესის, კოსმოსური კვლევებისა და გლობალური თანამშრომლობის კუთხით. შესაძლოა, ახალი გამოწვევებიც გაჩნდეს ჯანდაცვისა და ეკონომიკის სფეროებში.'
+            // შეგიძლია დაამატო კიდევ უამრავი წელი და ფაქტი აქ
+        };
+
+        const searchHistory = [];
+        const MAX_HISTORY_ITEMS = 10;
+
+        function getBattleInfo() {
+            let yearInput = document.getElementById('yearInput').value.trim();
+            const battleInfoDiv = document.getElementById('battleInfo');
+
+            battleInfoDiv.classList.remove('show');
+
+            let info = '';
+            let found = false;
+
+            yearInput = yearInput.toLowerCase();
+            yearInput = yearInput.replace(/ძვ\. ?წ\.?/g, 'bc');
+            yearInput = yearInput.replace(/\s+/g, ' ');
+
+            let cleanedYear = yearInput.replace(' bc', '');
+            if (isNaN(parseInt(cleanedYear)) || !cleanedYear) {
+                info = 'გთხოვთ, შეიყვანოთ სწორი წელი.';
+                found = true;
+            } else {
+                if (yearInput.includes('bc')) {
+                    const bcKey = cleanedYear + ' BC';
+                    if (battlesData[bcKey]) {
+                        info = battlesData[bcKey];
+                        found = true;
+                    }
+                } else {
+                    if (battlesData[yearInput]) {
+                        info = battlesData[yearInput];
+                        found = true;
+                    }
+                }
+            }
+            
+            if (!found) {
+                info = `ამ წლისთვის (${yearInput.toUpperCase()}) ინფორმაცია არ მოიძებნა ან ჯერ არ არის დამატებული. სცადეთ მაგალითები: 1, 1121, 1066, 1942, 480 ძვ. წ.`;
+            }
+
+            battleInfoDiv.innerHTML = info;
+            setTimeout(() => {
+                battleInfoDiv.classList.add('show');
+            }, 50);
+
+            if (found && yearInput && !searchHistory.includes(yearInput)) {
+                searchHistory.unshift(yearInput);
+                if (searchHistory.length > MAX_HISTORY_ITEMS) {
+                    searchHistory.pop();
+                }
+                updateHistoryList();
+            }
+        }
+
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+
+            if (searchHistory.length === 0) {
+                const emptyItem = document.createElement('li');
+                emptyItem.textContent = 'ისტორია ცარიელია.';
+                emptyItem.style.justifyContent = 'center';
+                emptyItem.style.color = 'var(--inner-modal-text)';
+                historyList.appendChild(emptyItem);
+                return;
+            }
+
+            searchHistory.forEach((year, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<span>${year.toUpperCase()}</span> <span class="clear-history-item" data-index="${index}">წაშლა</span>`;
+                
+                listItem.querySelector('span').onclick = () => {
+                    document.getElementById('yearInput').value = year;
+                    getBattleInfo();
+                    closeModal('historyModal');
+                };
+
+                listItem.querySelector('.clear-history-item').onclick = (e) => {
+                    e.stopPropagation();
+                    removeHistoryItem(parseInt(e.target.dataset.index));
+                };
+                historyList.appendChild(listItem);
+            });
+        }
+
+        function removeHistoryItem(index) {
+            searchHistory.splice(index, 1);
+            updateHistoryList();
+        }
+
+        // --- Tab and Modal Functions ---
+        const historyModal = document.getElementById('historyModal');
+        const feedbackModal = document.getElementById('feedbackModal');
+        const historyTabButton = document.getElementById('historyTabButton');
+        const feedbackTabButton = document.getElementById('feedbackTabButton');
+
+        function openModal(modalId) {
+            // Close all modals
+            historyModal.classList.remove('show');
+            feedbackModal.classList.remove('show');
+            historyModal.style.display = 'none';
+            feedbackModal.style.display = 'none';
+
+            // Remove active class from all buttons
+            historyTabButton.classList.remove('active');
+            feedbackTabButton.classList.remove('active');
+
+            // Open desired modal and mark button active
+            if (modalId === 'historyModal') {
+                historyModal.style.display = 'flex';
+                // Small delay for CSS transition after display:flex
+                setTimeout(() => { historyModal.classList.add('show'); }, 10); 
+                historyTabButton.classList.add('active');
+                updateHistoryList();
+            } else if (modalId === 'feedbackModal') {
+                feedbackModal.style.display = 'flex';
+                setTimeout(() => { feedbackModal.classList.add('show'); }, 10);
+                feedbackTabButton.classList.add('active');
+            }
+        }
+
+        function closeModal(modalId) {
+            if (modalId === 'historyModal') {
+                historyModal.classList.remove('show');
+                historyTabButton.classList.remove('active');
+                setTimeout(() => { historyModal.style.display = 'none'; }, 300); // Hide after animation
+            } else if (modalId === 'feedbackModal') {
+                feedbackModal.classList.remove('show');
+                feedbackTabButton.classList.remove('active');
+                setTimeout(() => { feedbackModal.style.display = 'none'; }, 300);
+            }
+        }
+
+        // Close when clicking outside the modal
+        window.onclick = function(event) {
+            if (event.target == historyModal) {
+                closeModal('historyModal');
+            } else if (event.target == feedbackModal) {
+                closeModal('feedbackModal');
+            }
+        }
+        
+        // Formspree submission (AJAX)
+        document.getElementById('feedbackForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    alert('თქვენი შეტყობინება წარმატებით გაიგზავნა! გმადლობთ უკუკავშირისთვის.');
+                    form.reset();
+                    closeModal('feedbackModal');
+                } else {
+                    alert('დაფიქსირდა შეცდომა შეტყობინების გაგზავნისას. გთხოვთ, სცადოთ მოგვიანებით.');
+                }
+            } catch (error) {
+                console.error('Error sending form:', error);
+                alert('ქსელური შეცდომა შეტყობინების გაგზავნისას. გთხოვთ, შეამოწმოთ თქვენი ინტერნეტ კავშირი.');
+            }
+        });
+
+        // Update history list on page load
+        document.addEventListener('DOMContentLoaded', updateHistoryList);
+
+    </script>
+</body>
+</html>
